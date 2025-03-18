@@ -16,6 +16,11 @@ MODEL=-hf bartowski/SmolLM2-135M-Instruct-GGUF
 	${LLAMA_CLI} --list-devices
 	${LLAMA_CLI} ${MODEL} -p 'find x, when x = 1 + 2' -n 128 -no-cnv
 
+%.clean:
+	rm -rf llama.cpp/build.$(basename $@)
+
 cpu: cpu.build cpu.run
 
 cuda: cuda.build cuda.run
+
+clean: cpu.clean cuda.clean
