@@ -12,13 +12,15 @@
             "userGid": "1000",
             "upgradePackages": "false"
         },
-    	"ghcr.io/devcontainers/features/nvidia-cuda:1": {},
-		"./features/apt-packages": {
+        "ghcr.io/devcontainers/features/nvidia-cuda:1": {
+            "installToolkit": "true"
+        },
+        "./features/apt-packages": {
             "packages": "libcurl4-openssl-dev"
         },
     },
-	"hostRequirements": {
-		"gpu": "optional" 
-	},
+    "hostRequirements": {
+        "gpu": "optional"
+    },
     "remoteUser": "vscode"
 }
