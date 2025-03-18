@@ -1,0 +1,27 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: devcontainer
+      uses: ./.github/workflows/actions/devcontainer
+      id: devcontainer
+    - name: setup
+      run: |
+        echo 'EXEC=${{ steps.devcontainer.outputs.exec }}' >> $GITHUB_ENV
+    - name: cpu
+      run: |
+        ${{ env.EXEC }} make cpu
+    - name: cuda
+      run: |
+        ${{ env.EXEC }} make cuda
