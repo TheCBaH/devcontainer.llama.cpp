@@ -1,6 +1,6 @@
 // For format details, see https://aka.ms/devcontainer.json.
 {
-    "name": "LLAMA.CPP decontainer",
+    "name": "LLAMA.CPP devcontainer",
     "build":  {
         "dockerfile": "Dockerfile",
     },

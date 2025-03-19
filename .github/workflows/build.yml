@@ -23,11 +23,20 @@ jobs:
       id: cache-models
       uses: actions/cache@v4
       with:
-        path: ~/.cache/llama.cpp
+        path: .cache
         key: ${{ hashFiles('Makefile') }}-models
+    - name: cache
+      run: |
+        mkdir -p .cache
+        ${{ env.EXEC }} sh -ceux 'mkdir -p ~/.cache'
+        ${{ env.EXEC }} sh -ceux 'mv .cache ~/.cache/llama.cpp
     - name: cpu
       run: |
         ${{ env.EXEC }} make cpu
     - name: cuda
       run: |
         ${{ env.EXEC }} make cuda
+    - name: cache-save
+      run: |
+        rm -rf .cache
+        ${{ env.EXEC }} sh -ceux 'mv -v ~/.cache/llama.cpp .cache'
