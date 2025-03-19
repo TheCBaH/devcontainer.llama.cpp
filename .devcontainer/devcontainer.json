@@ -13,7 +13,6 @@
             "upgradePackages": "false"
         },
         "ghcr.io/devcontainers/features/nvidia-cuda:1": {
-            "cudaVersion": "12.5",
             "installToolkit": "true"
         },
         "./features/apt-packages": {
