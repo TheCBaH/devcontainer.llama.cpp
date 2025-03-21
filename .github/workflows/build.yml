@@ -35,7 +35,7 @@ jobs:
         ${{ env.EXEC }} make cpu
     - name: cuda
       run: |
-        ${{ env.EXEC }} sh -ceux 'env LD_LIBRARY_PATH=$(dirname $(find /usr/local/ -name libcuda.so)) make cuda'
+        ${{ env.EXEC }} env LD_LIBRARY_PATH=/usr/local/cuda/lib64/stubs make cuda
     - name: cache-save
       run: |
         rm -rf .cache
