@@ -2,8 +2,8 @@ all: cpu
 
 CPUS=$$(getconf _NPROCESSORS_ONLN)
 
-#CMAKE.cuda=-DGGML_NATIVE=OFF -DGGML_CUDA=ON -DCMAKE_EXE_LINKER_FLAGS='-Wl,-rpath-link=/usr/local/cuda/lib64/stubs'
-CMAKE.cuda=-DGGML_NATIVE=OFF -DGGML_CUDA=ON
+CMAKE.cuda=-DGGML_NATIVE=OFF -DGGML_CUDA=ON -DCMAKE_EXE_LINKER_FLAGS='-Wl,-rpath-link=/usr/local/cuda/lib64/stubs'
+#CMAKE.cuda=-DGGML_NATIVE=OFF -DGGML_CUDA=ON
 ENV.cuda=env PATH=$$PATH:/usr/local/cuda/bin
 
 %.build:
