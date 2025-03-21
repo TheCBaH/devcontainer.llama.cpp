@@ -32,9 +32,10 @@ jobs:
         ${{ env.EXEC }} sh -ceux 'mv .cache ~/.cache/llama.cpp'
     - name: cpu
       run: |
-        ${{ env.EXEC }} make cpu
+        ${{ env.EXEC }} echo make cpu
     - name: cuda
       run: |
+        ${{ env.EXEC }} ls -al /usr/local/cuda/lib64/stubs
         ${{ env.EXEC }} env LD_LIBRARY_PATH=/usr/local/cuda/lib64/stubs make cuda
     - name: cache-save
       run: |
