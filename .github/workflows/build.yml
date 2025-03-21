@@ -36,6 +36,7 @@ jobs:
     - name: cuda
       run: |
         ${{ env.EXEC }} ls -al /usr/local/cuda/lib64/stubs
+        ${{ env.EXEC }} sudo sh -ceux 'cd /usr/local/cuda/lib64/stubs/;rm -f libcuda.so.1;ln -s libcuda.so libcuda.so.1'
         ${{ env.EXEC }} env LD_LIBRARY_PATH=/usr/local/cuda/lib64/stubs make cuda
     - name: cache-save
       run: |
