@@ -1,3 +1,4 @@
 *.bc
 *.pb
 *.so
+hlo_test
