@@ -47,9 +47,9 @@ jobs:
       uses: actions/cache@v4
       with:
         path: .cache/bazel-build
-        key: bazel-build-${{ hashFiles('xla/*.bzl', 'xla/WORKSPACE',  'xla/.bazelrc', 'xla/*.bazelrc') }}-${{ github.run_id }}
+        key: bazel-build-${{ hashFiles('xla/*.bzl', 'xla/WORKSPACE',  'xla/.bazel*', 'xla/*.bazelrc') }}-${{ github.run_id }}
         restore-keys: |
-          bazel-build-${{ hashFiles('xla/*.bzl', 'xla/WORKSPACE',  'xla/.bazelrc', 'xla/*.bazelrc') }}
+          bazel-build-${{ hashFiles('xla/*.bzl', 'xla/WORKSPACE',  'xla/.bazel*', 'xla/*.bazelrc') }}
     - name: fetch
       run: |
         ${{ env.EXEC }} make fetch
