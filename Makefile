@@ -34,8 +34,45 @@ build:
 	chmod +w hlo/pjrt_c_api_cpu_plugin.so
 	$(if ${WITH_GDB},,strip hlo/pjrt_c_api_cpu_plugin.so)
 	cp -pv xla/xla/pjrt/c/pjrt_c_api.h hlo/
-	
-run:
+
+PROTOBUF_ROOTS=\
+ xla/pjrt/execute_options.proto\
+ xla/pjrt/compile_options.proto\
+
+PROTOBUF_FILES= ${PROTOBUF_ROOTS}\
+ xla/autotune_results.proto\
+ xla/autotuning.proto\
+ xla/service/hlo.proto\
+ xla/service/metrics.proto\
+ xla/stream_executor/cuda/cuda_compute_capability.proto\
+ xla/stream_executor/device_description.proto\
+ xla/tsl/protobuf/dnn.proto\
+ xla/xla.proto\
+ xla/xla_data.proto\
+
+GOOGLE_PROTOBUF_FILES=\
+ any.proto\
+ duration.proto\
+ timestamp.proto\
+ wrappers.proto\
+
+hlo.clean:
+	git -C $(basename $@) clean -xdf .
+
+run: hlo.clean run.exec run.protobuf
+
+#echo ${BAZEL} run ${BAZEL_BUILD_OPTS} @com_google_protobuf//:protoc
+run.protobuf:
+	echo xla/bazel-bin/external/com_google_protobuf/protoc
+	mkdir -p hlo/google/protobuf
+	cp -pv $(addprefix .cache/bazel/external/protobuf/src/google/protobuf/,${GOOGLE_PROTOBUF_FILES}) hlo/google/protobuf/
+	set -eux;$(foreach d,$(sort $(dir $(PROTOBUF_FILES))), mkdir -p hlo/$d ;) true
+	$(foreach f,$(PROTOBUF_FILES),\
+		cp -v xla/$f hlo/$f;) true
+	$(foreach f,$(PROTOBUF_ROOTS),\
+		xla/bazel-bin/external/com_google_protobuf/protoc -Ihlo -o/dev/null hlo/$f;) true
+
+run.exec:
 	${BAZEL} run ${BAZEL_BUILD_OPTS} //xla/examples/axpy:stablehlo_compile_test 
 	cp -pv $(addprefix xla/bazel-bin/xla/examples/axpy/stablehlo_compile_test.runfiles/xla/, *.mlir.bc *.pb) hlo/
 	${BAZEL} run ${BAZEL_BUILD_OPTS} //xla/pjrt/c:pjrt_c_api_cpu_test
