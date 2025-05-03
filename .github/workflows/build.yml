@@ -35,7 +35,7 @@ jobs:
         df -h
     - name: configure
       run: |
-        ${{ env.EXEC }} make configure
+        ${{ env.EXEC }} make configure WITH_CLANG=1
     - name: Cache Bazel repo
       id: bazel-repo
       uses: actions/cache@v4

@@ -1,11 +1,12 @@
 all: configure build
 
 xla.configure:
-	set -eux;cd xla;./configure.py --backend CPU --host_compiler GCC --gcc_path /usr/bin/gcc
+	set -eux;cd xla;./configure.py --backend CPU $(if ${WITH_CLANG},--host_compiler CLANG --gcc_path /usr/bin/clang,--host_compiler GCC --gcc_path /usr/bin/gcc)
 
 configure: xla.configure
 	cp -vpf $(addprefix xla/,.bazelversion .bazelrc *.bazelrc WORKSPACE) .
 	git apply <WORKSPACE.patch
+	git -C xla checkout .
 	git -C xla apply <cpu_client_test.patch
 	git -C xla apply <pjrt_c_api_client.patch
 	sed -ie 's/build -c opt//' xla/tensorflow.bazelrc

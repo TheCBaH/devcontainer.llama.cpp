@@ -6,6 +6,7 @@ RUN set -eux;\
     export DEBIAN_FRONTEND=noninteractive; apt-get install -y --no-install-recommends\
   build-essential\
   ca-certificates\
+  clang\
   curl\
   gdb\
   git\
