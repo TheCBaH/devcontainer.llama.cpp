@@ -33,6 +33,7 @@ build:
 PROTOBUF_ROOTS=\
  xla/pjrt/execute_options.proto\
  xla/pjrt/compile_options.proto\
+ xla/xla.proto\
 
 PROTOBUF_FILES= ${PROTOBUF_ROOTS}\
  xla/autotune_results.proto\
@@ -42,7 +43,6 @@ PROTOBUF_FILES= ${PROTOBUF_ROOTS}\
  xla/stream_executor/cuda/cuda_compute_capability.proto\
  xla/stream_executor/device_description.proto\
  xla/tsl/protobuf/dnn.proto\
- xla/xla.proto\
  xla/xla_data.proto\
 
 GOOGLE_PROTOBUF_FILES=\
@@ -56,15 +56,19 @@ hlo.clean:
 
 run: hlo.clean run.exec run.protobuf
 
+PROTOC=xla/bazel-bin/external/com_google_protobuf/protoc 
 run.protobuf:
 	${BAZEL} run ${BAZEL_BUILD_OPTS} @com_google_protobuf//:protoc
 	mkdir -p hlo/google/protobuf
 	cp -pv $(addprefix .cache/bazel/external/protobuf/src/google/protobuf/,${GOOGLE_PROTOBUF_FILES}) hlo/google/protobuf/
 	set -eux;$(foreach d,$(sort $(dir $(PROTOBUF_FILES))), mkdir -p hlo/$d ;) true
 	$(foreach f,$(PROTOBUF_FILES),\
-		cp -v xla/$f hlo/$f;) true
-	$(foreach f,$(PROTOBUF_ROOTS),\
-		xla/bazel-bin/external/com_google_protobuf/protoc --proto_path=hlo -o/dev/null hlo/$f;) true
+ cp -v xla/$f hlo/$f;) true
+	set -eux;$(foreach f,$(PROTOBUF_ROOTS),\
+ ${PROTOC} --proto_path=hlo -o/dev/null hlo/$f;) true
+	set -eux;$(foreach f, add.3x2 Identity.2x2,\
+ ${PROTOC} --decode=xla.HloModuleProto --proto_path=hlo hlo/xla/xla.proto < hlo/${f}.xla.pb > hlo/${f}.xla.txt;) true
+	${PROTOC} --decode=xla.CompileOptionsProto --proto_path=hlo xla/pjrt/compile_options.proto < hlo/compile_options.0.pb > hlo/compile_options.0.txt
 
 run.exec:
 	${BAZEL} build ${BAZEL_BUILD_OPTS} ${TARGET}
