@@ -21,5 +21,8 @@
         "stablehlo",
         "userdel",
         "valgrind"
-    ]
+    ],
+    "files.exclude": {
+        ".cache": true
+    }
 }
