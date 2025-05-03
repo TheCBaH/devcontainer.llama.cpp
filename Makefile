@@ -7,28 +7,27 @@ configure: xla.configure
 	git -C xla checkout .
 	git -C xla apply <cpu_client_test.patch
 	git -C xla apply <pjrt_c_api_client.patch
-	sed -ie 's/build -c opt//' xla/tensorflow.bazelrc
 
 BAZEL_CACHE_PERSISTENT=${CURDIR}/.cache/bazel
 BAZEL_CACHE=${CURDIR}/.cache/bazel
 BAZEL=set -eux;cd xla;bazel --output_base ${BAZEL_CACHE}
 BAZEL_OPTS=$(if $(IDX_CHANNEL),,--repository_cache=${BAZEL_CACHE_PERSISTENT} --disk_cache=${BAZEL_CACHE_PERSISTENT}-build)
 
-TARGET.pjrt=//xla/pjrt/c:pjrt_c_api_cpu_plugin.so
-TARGET.builder=//xla/hlo/builder:xla_builder
-TARGET=//xla/pjrt/c:pjrt_c_api_cpu_plugin.so //xla/examples/axpy:stablehlo_compile_test
+TARGETS=\
+ //xla/examples/axpy:stablehlo_compile_test\
+ //xla/hlo/translate:xla-translate\
+ //xla/pjrt/c:pjrt_c_api_cpu_plugin.so\
+ //xla/pjrt/c:pjrt_c_api_cpu_test\
+ //xla/pjrt/cpu:cpu_client_test\
 
 BAZEL_BUILD_OPTS=${BAZEL_OPTS} --define use_stablehlo=true\
-  $(if ${WITH_GDB} ,--compilation_mode dbg, --compilation_mode fastbuild --strip=always) --copt -Os
+  $(if ${WITH_GDB} ,--compilation_mode dbg, --compilation_mode opt --strip=always)
 
 fetch:
-	${BAZEL} fetch ${BAZEL_OPTS} ${TARGET}
-
-%.build:
-	${BAZEL} build ${BAZEL_BUILD_OPTS} $(TARGET.$(basename $@))
+	${BAZEL} fetch ${BAZEL_OPTS} ${TARGETS}
 
 build:
-	${BAZEL} build ${BAZEL_BUILD_OPTS} ${TARGET}
+	${BAZEL} build ${BAZEL_BUILD_OPTS} ${TARGETS}
 
 PROTOBUF_ROOTS=\
  xla/pjrt/execute_options.proto\
