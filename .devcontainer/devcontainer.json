@@ -11,6 +11,15 @@
         }
     },
     "remoteUser": "vscode",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "googlecloudtools.cloudcode",
+                "rooveterinaryinc.roo-cline",
+                "streetsidesoftware.code-spell-checker",
+            ]
+        }
+    },
     "postCreateCommand": {
         "submodules": "git submodule update --recursive --init --depth=1"
     },

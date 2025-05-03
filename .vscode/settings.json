@@ -1,4 +1,19 @@
 {
     "IDX.aI.enableInlineCompletion": true,
-    "IDX.aI.enableCodebaseIndexing": true
+    "IDX.aI.enableCodebaseIndexing": true,
+    "cSpell.words": [
+        "autoremove",
+        "bazel",
+        "bazelrc",
+        "cuda",
+        "devcontainers",
+        "fastbuild",
+        "googlecloudtools",
+        "noninteractive",
+        "pjrt",
+        "rooveterinaryinc",
+        "stablehlo",
+        "userdel",
+        "valgrind"
+    ]
 }
