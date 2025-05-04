@@ -25,7 +25,7 @@ configure: LiteRT.configure
 
 BAZEL_CACHE_PERSISTENT=${CURDIR}/.cache/bazel
 BAZEL_CACHE=${CURDIR}/.cache/bazel
-BAZEL=set -eux;cd LiteRT;env HERMETIC_PYTHON_VERSION=3.12 bazel --output_base ${BAZEL_CACHE}
+BAZEL=set -eux;cd LiteRT;bazel --output_base ${BAZEL_CACHE}
 BAZEL_OPTS=$(if $(IDX_CHANNEL),,--repository_cache=${BAZEL_CACHE_PERSISTENT}-repo --disk_cache=${BAZEL_CACHE_PERSISTENT}-build)
 
 TARGETS=\
