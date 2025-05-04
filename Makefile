@@ -16,10 +16,15 @@ CONFIG=/usr/bin/python3\
  -Wno-c++20-designator -Wno-gnu-inline-cpp-without-extern\
 
 space=${_space_} ${_space_}
+
+LiteRT/third_party/tensorflow/third_party/xla/third_party/py/python_wheel.bzl:
+	git -C LiteRT/third_party/tensorflow/third_party/xla/ checkout master .
+
+LiteRT.patch: LiteRT/third_party/tensorflow/third_party/xla/third_party/py/python_wheel.bzl
  
-LiteRT.configure: LiteRT/configure
+LiteRT.configure: LiteRT.patch LiteRT/configure
 	git -C LiteRT checkout .
-	printf "$(subst ${space},\n,${CONFIG})\n"	| $^
+	printf "$(subst ${space},\n,${CONFIG})\n" | $^
 
 configure: LiteRT.configure
 
@@ -50,6 +55,8 @@ clean:
  configure\
  fetch\
  LiteRT.configure\
+ LiteRT.patch\
+ log\
  log\
  patches\
  submodule\
