@@ -4,7 +4,6 @@ submodule:
 	git submodule update --recursive --init --depth=1
 
 iree/configure_bazel.py: submodule
-	git submodule update --recursive --init --depth=1
 
 iree.configure: iree/configure_bazel.py
 	git -C iree checkout .

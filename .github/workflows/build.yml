@@ -49,6 +49,23 @@ jobs:
     - name: submodule
       run: |
         make submodule
+    - name: cache
+      id: cache-id
+      run: |
+        set -eux
+        ${{ env.EXEC }} df -h
+        df -h
+        mkdir .cache
+        if [ "$(stat --format %d /mnt)" != "$(stat --format %d .)" ]; then
+          df -h /mnt
+          sudo mkdir /mnt/.cache
+          sudo chown ${USER} /mnt/.cache
+          sudo mount --bind /mnt/.cache .cache
+        fi
+        iree_commit=$(git -C iree log -n 1 --format=%h)
+        echo "id=${{ hashFiles( 'iree/WORKSPACE', 'iree/.bazel*', 'iree/*.bazelrc') }}" >> $GITHUB_OUTPUT
+        echo "id1=$iree_commit" >> $GITHUB_OUTPUT
+        echo "id2=${{ hashFiles( 'Makefile', '.github/workflows/build.yml' ) }}" >> $GITHUB_OUTPUT
     - name: devcontainer
       uses: ./.github/workflows/actions/devcontainer
       id: devcontainer
@@ -58,23 +75,6 @@ jobs:
     - name: configure
       run: |
         ${{ env.EXEC }} make configure WITH_CLANG=1
-    - name: cache
-      id: cache-id
-      run: |
-        set -eux
-        ${{ env.EXEC }} df -h
-        df -h
-        if [ "$(stat --format %d /mnt)" != "$(stat --format %d .)" ]; then
-          df -h /mnt
-          sudo mkdir /mnt/.cache
-          sudo chown ${USER} /mnt/.cache
-          mkdir .cache
-          sudo mount --bind /mnt/.cache .cache
-        fi
-        iree_commit=$(git -C iree log -n 1 --format=%h)
-        echo "id=${{ hashFiles( 'iree/WORKSPACE', 'iree/.bazel*', 'iree/*.bazelrc') }}" >> $GITHUB_OUTPUT
-        echo "id1=$iree_commit" >> $GITHUB_OUTPUT
-        echo "id2=${{ hashFiles( 'Makefile', '.github/workflows/build.yml' ) }}" >> $GITHUB_OUTPUT
     - name: Cache Bazel repo
       id: bazel-repo
       uses: actions/cache@v4
