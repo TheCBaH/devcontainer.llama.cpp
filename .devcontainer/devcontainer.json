@@ -1,6 +1,6 @@
 // For format details, see https://aka.ms/devcontainer.json.
 {
-    "name": "OpenXLA devcontainer",
+    "name": "IREE devcontainer",
     "build":  {
         "dockerfile": "Dockerfile"
     },
