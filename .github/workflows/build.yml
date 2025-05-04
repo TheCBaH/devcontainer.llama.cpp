@@ -91,7 +91,7 @@ jobs:
     - name: Release File
       run: |
         file=pjrt-cpu.tar.xz
-        (cd hlo;tar -ck --numeric-owner *)| xz -T0 -z > $file
+        (cd hlo;tar -ck --numeric-owner *)| xz -9 -T0 -z > $file
         ls -lh $file
         tar -tvf $file
     - name: upload release
