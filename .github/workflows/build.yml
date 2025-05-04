@@ -8,13 +8,47 @@ on:
     - cron: 30 3 * * SAT
 
 jobs:
-  build:
+  source:
     runs-on: ubuntu-latest
+    outputs:
+      id: ${{ steps.cache-id.output }}
     steps:
     - name: checkout
       uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: false
+    - name: cache
+      id: cache-id
+      run: |
+        set -eux
+        iree_commit=$(git ls-tree HEAD iree|cut -d' ' -f 3)
+        echo "submodule-$iree_commit" >> $GITHUB_OUTPUT
+    - name: Cache source
+      id: submodules
+      uses: actions/cache@v4
+      with:
+        path: .git/modules
+        key: ${{ steps.cache-id.outputs.id }}
+    - name: submodules
+      run: |
+        make submodules
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [source]
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: false
+    - uses: actions/cache/restore@v4
+      id: submodules
+      with:
+        path: .git/modules
+        key: ${{ needs.source.outputs.id }}
+    - name: submodules
+      run: |
+        make submodules
     - name: devcontainer
       uses: ./.github/workflows/actions/devcontainer
       id: devcontainer
