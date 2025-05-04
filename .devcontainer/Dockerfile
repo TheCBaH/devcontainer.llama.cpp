@@ -17,7 +17,7 @@ RUN set -eux;\
   xz-utils\
 ;\
     apt-get autoremove -y; apt-get clean -y ; apt-get clean; rm -rf /var/lib/apt/lists/*;\
-    cd /tmp/;BAZEL=7.4.1;\
+    cd /tmp/;BAZEL=7.3.1;\
     wget https://github.com/bazelbuild/bazel/releases/download/$BAZEL/bazel-$BAZEL-installer-linux-x86_64.sh;\
     bash bazel-$BAZEL-installer-linux-x86_64.sh --prefix=/usr/local/;cd /;rm -rf /tmp/*;\
     echo DONE

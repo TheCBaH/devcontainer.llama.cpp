@@ -12,6 +12,7 @@
         "devcontainers",
         "fastbuild",
         "googlecloudtools",
+        "iree",
         "mlir",
         "noninteractive",
         "pjrt",
