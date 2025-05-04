@@ -29,9 +29,9 @@ jobs:
       with:
         path: .git/modules
         key: ${{ steps.cache-id.outputs.id }}
-    - name: submodules
+    - name: submodule
       run: |
-        make submodules
+        make submodule
 
   build:
     runs-on: ubuntu-latest
@@ -46,9 +46,9 @@ jobs:
       with:
         path: .git/modules
         key: ${{ needs.source.outputs.id }}
-    - name: submodules
+    - name: submodule
       run: |
-        make submodules
+        make submodule
     - name: devcontainer
       uses: ./.github/workflows/actions/devcontainer
       id: devcontainer
