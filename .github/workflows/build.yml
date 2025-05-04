@@ -21,7 +21,7 @@ jobs:
       id: cache-id
       run: |
         set -eux
-        iree_commit=$(git ls-tree HEAD iree|cut -d' ' -f 3)
+        iree_commit=$(git ls-tree HEAD iree|awk '{print $1}')
         echo "submodule-$iree_commit" >> $GITHUB_OUTPUT
     - name: Cache source
       id: submodules
