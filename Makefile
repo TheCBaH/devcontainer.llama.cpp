@@ -3,23 +3,33 @@ all: configure build
 submodule:
 	git submodule update --recursive --init --depth=1
 
-iree/configure_bazel.py: submodule
-	git submodule update --recursive --init --depth=1
+LiteRT/configure.py: submodule
 
-iree.configure: iree/configure_bazel.py
-	git -C iree checkout .
-	env $(if ${WITH_CLANG},CC=/usr/bin/clang CXX=/usr/bin/clang++,CC=/usr/bin/gcc CXX=/usr/bin/g++) python3 $^
+CONFIG=/usr/bin/python3\
+ /usr/lib/python3/dist-packages\
+ N\
+ N\
+ Y\
+ /usr/bin/clang\
+ -Wno-sign-compare\
+ N\
+ -Wno-c++20-designator -Wno-gnu-inline-cpp-without-extern\
 
-configure: iree.configure
+space=${_space_} ${_space_}
+ 
+LiteRT.configure: LiteRT/configure
+	git -C LiteRT checkout .
+	printf "$(subst ${space},\n,${CONFIG})\n"	| $^
+
+configure: LiteRT.configure
 
 BAZEL_CACHE_PERSISTENT=${CURDIR}/.cache/bazel
 BAZEL_CACHE=${CURDIR}/.cache/bazel
-BAZEL=set -eux;cd iree;bazel --output_base ${BAZEL_CACHE}
+BAZEL=set -eux;cd LiteRT;bazel --output_base ${BAZEL_CACHE}
 BAZEL_OPTS=$(if $(IDX_CHANNEL),,--repository_cache=${BAZEL_CACHE_PERSISTENT}-repo --disk_cache=${BAZEL_CACHE_PERSISTENT}-build)
 
 TARGETS=\
- //tools:iree-compile\
- //tools:iree-opt\
+ //litert/runtime:metrics\
 
 BAZEL_BUILD_OPTS=${BAZEL_OPTS} --define use_stablehlo=true\
   $(if ${WITH_GDB} ,--compilation_mode dbg, --compilation_mode opt --strip=always)
@@ -39,7 +49,7 @@ clean:
  clean\
  configure\
  fetch\
- iree.configure\
+ LiteRT.configure\
  log\
  patches\
  submodule\
