@@ -37,9 +37,9 @@ jobs:
           mkdir .cache
           sudo mount --bind /mnt/.cache .cache
         fi
-        xla_commit=$(git -C xla log -n 1 --format=%h)
-        echo "id=${{ hashFiles( 'xla/*.bzl', 'xla/WORKSPACE', 'xla/.bazel*', 'xla/*.bazelrc') }}" >> $GITHUB_OUTPUT
-        echo "id1=$xla_commit" >> $GITHUB_OUTPUT
+        iree_commit=$(git -C iree log -n 1 --format=%h)
+        echo "id=${{ hashFiles( 'iree/WORKSPACE', 'iree/.bazel*', 'iree/*.bazelrc') }}" >> $GITHUB_OUTPUT
+        echo "id1=$iree_commit" >> $GITHUB_OUTPUT
         echo "id2=${{ hashFiles( 'Makefile', '.github/workflows/build.yml' ) }}" >> $GITHUB_OUTPUT
     - name: Cache Bazel repo
       id: bazel-repo
@@ -65,37 +65,8 @@ jobs:
     - name: run
       run: |
         ${{ env.EXEC }} make run
-    - name: hlo
-      run: |
-        ${{ env.EXEC }} make hlo
     - name: disk space
       run: |
         ${{ env.EXEC }} df -h
         df -h
         du -sh .cache/* hlo/
-    - name: Upload HLO Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: hlo-artifacts
-        path: hlo/
-  release:
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: github.ref_type == 'tag'
-    permissions:
-      contents: write
-    steps:
-    - uses: actions/download-artifact@v4
-      with:
-        name: hlo-artifacts
-    - name: Release File
-      run: |
-        file=pjrt-cpu.tar.xz
-        (cd hlo;tar -ck --numeric-owner *)| xz -9 -T0 -z > $file
-        ls -lh $file
-        tar -tvf $file
-    - name: upload release
-      uses: softprops/action-gh-release@v2
-      with:
-        files: |
-          pjrt-cpu.tar.xz
