@@ -1,6 +1,6 @@
 // For format details, see https://aka.ms/devcontainer.json.
 {
-    "name": "OpenXLA devcontainer",
+    "name": "LiteRT devcontainer",
     "build":  {
         "dockerfile": "Dockerfile"
     },
@@ -10,7 +10,7 @@
             "upgradePackages": "false"
         },
         "./features/apt-packages": {
-            "packages": "build-essential clang gdb lld python3 valgrind zlib1g-dev"
+            "packages": "build-essential clang gdb lld python3 valgrind"
         },
         "./features/bazel": {
             "version": "7.4.1"
