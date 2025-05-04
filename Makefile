@@ -5,6 +5,8 @@ submodule:
 
 LiteRT/configure.py: submodule
 
+WITH_CLANG?=1
+
 CONFIG=/usr/bin/python3\
  /usr/lib/python3/dist-packages\
  N\
