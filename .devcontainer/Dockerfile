@@ -1,4 +1,4 @@
-ARG VARIANT=22.04
+ARG VARIANT=24.04
 FROM ubuntu:${VARIANT}
 RUN set -eux;\
     if id -u ubuntu ; then userdel -r ubuntu; fi;\
