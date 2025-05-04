@@ -11,7 +11,7 @@ jobs:
   source:
     runs-on: ubuntu-latest
     outputs:
-      id: ${{ steps.cache-id.output }}
+      id: ${{ steps.cache-id.outputs.id }}
     steps:
     - name: checkout
       uses: actions/checkout@v4
@@ -21,8 +21,8 @@ jobs:
       id: cache-id
       run: |
         set -eux
-        iree_commit=$(git ls-tree HEAD iree|awk '{print $1}')
-        echo "submodule-$iree_commit" >> $GITHUB_OUTPUT
+        iree_commit=$(git ls-tree HEAD iree|awk '{print $3}')
+        echo "id=submodule-$iree_commit" >> $GITHUB_OUTPUT
     - name: Cache source
       id: submodules
       uses: actions/cache@v4
