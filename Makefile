@@ -23,7 +23,7 @@ LiteRT/third_party/tensorflow/third_party/xla/third_party/py/python_wheel.bzl:
 	git -C LiteRT/third_party/tensorflow/ checkout master
 
 LiteRT.patch: LiteRT/third_party/tensorflow/third_party/xla/third_party/py/python_wheel.bzl
-	git -C litert apply <cxx_version.patch
+	git -C LiteRT apply <cxx_version.patch
  
 LiteRT.configure: LiteRT/configure LiteRT.patch 
 	git -C LiteRT checkout .
