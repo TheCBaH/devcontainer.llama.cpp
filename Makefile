@@ -35,8 +35,17 @@ BAZEL_CACHE=${CURDIR}/.cache/bazel
 BAZEL=set -eux;cd LiteRT;bazel --output_base ${BAZEL_CACHE}
 BAZEL_OPTS=$(if $(IDX_CHANNEL),,--repository_cache=${BAZEL_CACHE_PERSISTENT}-repo --disk_cache=${BAZEL_CACHE_PERSISTENT}-build)
 
-TARGETS=\
- //litert/tools:apply_plugin\
+TARGETS_TEST=$(addprefix //litert/tools:,\
+ benchmark_litert_model_test\
+ apply_plugin_test\
+ apply_plugin_main_for_test\
+)
+
+TARGETS=$(addprefix //litert/tools:,\
+ apply_plugin\
+ run_model\
+)\
+ ${TARGETS_TEST}
 
 BAZEL_BUILD_OPTS=${BAZEL_OPTS} --define use_stablehlo=true\
   $(if ${WITH_GDB} ,--compilation_mode dbg, --compilation_mode opt --strip=always)
@@ -46,6 +55,9 @@ fetch:
 
 build:
 	${BAZEL} build ${BAZEL_BUILD_OPTS} ${TARGETS}
+
+run:
+	${BAZEL} run ${BAZEL_BUILD_OPTS} ${TARGETS_TEST}
 
 clean:
 	${BAZEL} clean --expunge
