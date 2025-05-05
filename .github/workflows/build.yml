@@ -62,10 +62,6 @@ jobs:
           sudo chown ${USER} /mnt/.cache
           sudo mount --bind /mnt/.cache .cache
         fi
-        iree_commit=$(git -C iree log -n 1 --format=%h)
-        echo "id=${{ hashFiles( 'iree/WORKSPACE', 'iree/.bazel*', 'iree/*.bazelrc') }}" >> $GITHUB_OUTPUT
-        echo "id1=$iree_commit" >> $GITHUB_OUTPUT
-        echo "id2=${{ hashFiles( 'Makefile', '.github/workflows/build.yml' ) }}" >> $GITHUB_OUTPUT
     - name: devcontainer
       uses: ./.github/workflows/actions/devcontainer
       id: devcontainer
@@ -75,6 +71,13 @@ jobs:
     - name: configure
       run: |
         ${{ env.EXEC }} make configure WITH_CLANG=
+    - name: cache ID
+      id: cache-id
+      run: |
+        iree_commit=$(git -C iree log -n 1 --format=%h)
+        echo "id=${{ hashFiles( 'iree/WORKSPACE', 'iree/.bazel*', 'iree/*.bazelrc') }}" >> $GITHUB_OUTPUT
+        echo "id1=$iree_commit" >> $GITHUB_OUTPUT
+        echo "id2=${{ hashFiles( 'Makefile', '.github/workflows/build.yml' ) }}" >> $GITHUB_OUTPUT
     - name: Cache Bazel repo
       id: bazel-repo
       uses: actions/cache@v4
@@ -100,4 +103,4 @@ jobs:
       run: |
         ${{ env.EXEC }} df -h
         df -h
-        du -sh .cache/* hlo/
+        du -sh .cache/*
