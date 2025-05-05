@@ -52,7 +52,7 @@ TARGETS=$(addprefix //litert/tools:,\
  ${TARGETS_TEST}
 
 BAZEL_BUILD_OPTS=${BAZEL_OPTS} --define use_stablehlo=true\
-  $(if ${WITH_GDB} ,--compilation_mode dbg, --compilation_mode opt --strip=always)
+  $(if ${WITH_GDB} ,--compilation_mode dbg, --compilation_mode opt --strip=always) --cxxopt=-std=c++20 --host_cxxopt=-std=c++20
 
 fetch:
 	${BAZEL} fetch ${BAZEL_OPTS} ${TARGETS}
