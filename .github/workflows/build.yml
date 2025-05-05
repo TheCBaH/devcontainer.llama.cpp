@@ -16,7 +16,6 @@ jobs:
       with:
         submodules: recursive
     - name: cache
-      id: cache-id
       run: |
         set -eux
         ${{ env.EXEC }} df -h
@@ -28,10 +27,6 @@ jobs:
           sudo chown ${USER} /mnt/.cache
           sudo mount --bind /mnt/.cache .cache
         fi
-        LiteRT_commit=$(git -C LiteRT log -n 1 --format=%h)
-        echo "id=${{ hashFiles( 'LiteRT/WORKSPACE', 'LiteRT/.*bazel*', 'LiteRT/.bazel*') }}" >> $GITHUB_OUTPUT
-        echo "id1=$LiteRT_commit" >> $GITHUB_OUTPUT
-        echo "id2=${{ hashFiles( 'Makefile', '.github/workflows/build.yml' ) }}" >> $GITHUB_OUTPUT
     - name: devcontainer
       uses: ./.github/workflows/actions/devcontainer
       id: devcontainer
@@ -41,6 +36,13 @@ jobs:
     - name: configure
       run: |
         ${{ env.EXEC }} make configure WITH_CLANG=1
+    - name: cache ID
+      id: cache-id
+      run: |
+        LiteRT_commit=$(git -C LiteRT log -n 1 --format=%h)
+        echo "id=${{ hashFiles( 'LiteRT/WORKSPACE', 'LiteRT/.*bazel*', 'LiteRT/.bazel*') }}" >> $GITHUB_OUTPUT
+        echo "id1=$LiteRT_commit" >> $GITHUB_OUTPUT
+        echo "id2=${{ hashFiles( 'Makefile', '.github/workflows/build.yml' ) }}" >> $GITHUB_OUTPUT
     - name: Cache Bazel repo
       id: bazel-repo
       uses: actions/cache@v4
