@@ -50,7 +50,6 @@ jobs:
       run: |
         make submodule
     - name: cache
-      id: cache-id
       run: |
         set -eux
         ${{ env.EXEC }} df -h
