@@ -62,6 +62,9 @@ jobs:
     - name: build
       run: |
         ${{ env.EXEC }} make build
+    - name: build
+      run: |
+        ${{ env.EXEC }} make run
     - name: disk space
       run: |
         ${{ env.EXEC }} df -h
