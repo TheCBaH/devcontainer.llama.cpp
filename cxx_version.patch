@@ -1,0 +1,15 @@
+diff --git a/.bazelrc b/.bazelrc
+index c99c5f98..2874e987 100644
+--- a/.bazelrc
++++ b/.bazelrc
+@@ -304,8 +304,8 @@ build:android --cxxopt=-std=c++17
+ build:android --host_cxxopt=-std=c++17
+ build:ios --cxxopt=-std=c++17
+ build:ios --host_cxxopt=-std=c++17
+-build:linux --cxxopt=-std=c++17
+-build:linux --host_cxxopt=-std=c++17
++build:linux --cxxopt=-std=c++20
++build:linux --host_cxxopt=-std=c++20
+ build:macos --cxxopt=-std=c++17
+ build:macos --host_cxxopt=-std=c++17
+ build:windows --cxxopt=/std:c++17

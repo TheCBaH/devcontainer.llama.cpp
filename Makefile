@@ -23,10 +23,14 @@ LiteRT/third_party/tensorflow/third_party/xla/third_party/py/python_wheel.bzl:
 	git -C LiteRT/third_party/tensorflow/ checkout master
 
 LiteRT.patch: LiteRT/third_party/tensorflow/third_party/xla/third_party/py/python_wheel.bzl
+	git -C litert apply <cxx_version.patch
  
 LiteRT.configure: LiteRT/configure LiteRT.patch 
 	git -C LiteRT checkout .
 	printf "$(subst ${space},\n,${CONFIG})\n" | $<
+
+patches:
+	git -C LiteRT diff .bazelrc >cxx_version.patch
 
 configure: LiteRT.configure
 
