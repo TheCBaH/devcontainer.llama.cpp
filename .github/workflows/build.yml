@@ -63,7 +63,7 @@ jobs:
         ${{ env.EXEC }} make fetch
     - name: build
       run: |
-        ${{ env.EXEC }} make build
+        ${{ env.EXEC }} make build.1
     - name: build
       run: |
         ${{ env.EXEC }} make run

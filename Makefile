@@ -39,17 +39,19 @@ BAZEL_CACHE=${CURDIR}/.cache/bazel
 BAZEL=set -eux;cd LiteRT;bazel --output_base ${BAZEL_CACHE}
 BAZEL_OPTS=$(if $(IDX_CHANNEL),,--repository_cache=${BAZEL_CACHE_PERSISTENT}-repo --disk_cache=${BAZEL_CACHE_PERSISTENT}-build)
 
-TARGETS_TEST=$(addprefix //litert/tools:,\
+TARGETS.1=$(addprefix //litert/tools:,\
+ benchmark_litert_model_test\
+ apply_plugin\
+ run_model\
+)
+
+TARGETS.2=$(addprefix //litert/tools:,\
  benchmark_litert_model_test\
  apply_plugin_test\
  apply_plugin_main_for_test\
 )
 
-TARGETS=$(addprefix //litert/tools:,\
- apply_plugin\
- run_model\
-)\
- ${TARGETS_TEST}
+TARGETS=${TARGETS.1} ${TARGETS.2}
 
 BAZEL_BUILD_OPTS=${BAZEL_OPTS} --define use_stablehlo=true\
   $(if ${WITH_GDB} ,--compilation_mode dbg, --compilation_mode opt --strip=always) --cxxopt=-std=c++20 --host_cxxopt=-std=c++20
@@ -57,11 +59,14 @@ BAZEL_BUILD_OPTS=${BAZEL_OPTS} --define use_stablehlo=true\
 fetch:
 	${BAZEL} fetch ${BAZEL_OPTS} ${TARGETS}
 
-build:
-	${BAZEL} build ${BAZEL_BUILD_OPTS} ${TARGETS}
+build.1:
+	${BAZEL} build ${BAZEL_BUILD_OPTS} ${TARGETS.1}
+
+build.2:
+	${BAZEL} build ${BAZEL_BUILD_OPTS} ${TARGETS.2}
 
 run:
-	${BAZEL} run ${BAZEL_BUILD_OPTS} ${TARGETS_TEST}
+	${BAZEL} run ${BAZEL_BUILD_OPTS} ${TARGETS}
 
 clean:
 	${BAZEL} clean --expunge
