@@ -6,6 +6,31 @@ on:
   workflow_dispatch:
 
 jobs:
+  build-mac:
+    runs-on: macos-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: Cache Models
+      id: cache-models
+      uses: actions/cache@v4
+      with:
+        path: .cache
+        key: ${{ hashFiles('Makefile') }}-models
+    - name: cache
+      run: |
+        mkdir -p .cache
+        sh -ceux 'mkdir -p ~/.cache'
+        sh -ceux 'mv .cache ~/.cache/llama.cpp'
+    - name: mac
+      run: |
+        make mac
+    - name: cache-save
+      run: |
+        rm -rf .cache
+        sh -ceux 'mv -v ~/.cache/llama.cpp .cache'
   build:
     runs-on: ubuntu-latest
     steps:
