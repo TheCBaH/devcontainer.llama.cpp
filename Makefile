@@ -5,7 +5,7 @@ CPUS=$$(getconf _NPROCESSORS_ONLN)
 CMAKE.cuda=-DGGML_NATIVE=OFF -DGGML_CUDA=ON
 ENV.cuda=env PATH=$$PATH:/usr/local/cuda/bin
 
-CMAKE.mac=\
+CMAKE.metal=\
  -DGGML_METAL_EMBED_LIBRARY=ON\
  -DGGML_METAL_USE_BF16=ON\
  -DGGML_OPENMP=OFF\
@@ -28,13 +28,13 @@ cpu: cpu.build cpu.run
 
 cuda: cuda.build cuda.run
 
-mac: mac.build mac.run
+metal: metal.build metal.run
 
 llama.cpp/CMakeLists.txt: llama.cpp
 
 llama.cpp:
 	git submodule update --recursive --init --depth=1 $@
 
-clean: cpu.clean cuda.clean mac.clean
+clean: cpu.clean cuda.clean metal.clean
 
-.PHONY: llama.cpp clean %.clean mac cpu cuda
+.PHONY: llama.cpp clean %.clean metal cpu cuda
