@@ -13,6 +13,8 @@ CMAKE.metal=\
 %.build: llama.cpp/CMakeLists.txt
 	cd llama.cpp && $(ENV.$(basename $@)) cmake -B build.$(basename $@) -G Ninja -DCMAKE_BUILD_TYPE=Release $(CMAKE.$(basename $@)) -DLLAMA_CURL=ON
 	cd llama.cpp && $(ENV.$(basename $@)) cmake --build build.$(basename $@) -j ${CPUS} --target llama-cli
+	cd llama.cpp && $(ENV.$(basename $@)) cmake --build build.$(basename $@) -j ${CPUS} --target llama-server
+	cd llama.cpp && $(ENV.$(basename $@)) cmake --build build.$(basename $@) -j ${CPUS} --target llama-bench
 
 LLAMA_CLI=llama.cpp/build.$(basename $@)/bin/llama-cli
 
