@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         build_type: [cpu, cuda, metal]
         exclude:
           - os: macos-latest
@@ -19,6 +19,12 @@ jobs:
             build_type: cuda
           - os: ubuntu-latest
             build_type: metal
+          - os: windows-latest
+            build_type: metal
+          - os: windows-latest
+            build_type: cuda
+    env:
+      CMAKE_SYSTEM_VERSION: ${{ matrix.os == 'windows-latest' && '10.0' || '' }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -35,22 +41,49 @@ jobs:
           else
             echo 'EXEC=' >> $GITHUB_ENV
           fi
+      - name: Set CMake Build Type
+        shell: bash
+        run: |
+          if [ "${{ matrix.build_type }}" = "cpu" ]; then
+            echo "BUILD_TYPE_CMAKE=Release" >> $GITHUB_ENV
+          elif [ "${{ matrix.build_type }}" = "cuda" ]; then
+            echo "BUILD_TYPE_CMAKE=Release" >> $GITHUB_ENV # Or appropriate for CUDA
+          else
+            echo "BUILD_TYPE_CMAKE=Release" >> $GITHUB_ENV # Default
+          fi
+      - name: Set up VCPKG and Dependencies (Windows only)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git D:/vcpkg -b 2023.10.19 --depth 1
+          D:/vcpkg/bootstrap-vcpkg.bat
+          echo "D:/vcpkg" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "VCPKG_ROOT=D:/vcpkg" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "VCPKG_DEFAULT_TRIPLET=x64-windows-static" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          D:/vcpkg/vcpkg install curl:x64-windows-static --recurse
+          # Future: vcpkg install some-dependency:x64-windows-static
+          echo "CMAKE_TOOLCHAIN_FILE=D:/vcpkg/scripts/buildsystems/vcpkg.cmake" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Cache Models
         uses: actions/cache@v4
         with:
-          path: .cache
-          key: models-${{ matrix.os }}-${{ hashFiles('Makefile') }}
+          path: |
+            ${{ runner.os == 'Windows' && env.LOCALAPPDATA + '/llama.cpp-cache' || '.cache' }}
+          key: models-${{ matrix.os }}-${{ hashFiles('Makefile') }}-${{ hashFiles('CMakeLists.txt') }}
       - name: cache
         run: |
           mkdir -p .cache
           if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             ${{ env.EXEC }} sh -ceux 'mkdir -p ~/.cache'
             ${{ env.EXEC }} sh -ceux 'mv .cache ~/.cache/llama.cpp'
-          else
+          elif [ "${{ matrix.os }}" = "windows-latest" ]; then
+            mkdir -p ${env:LOCALAPPDATA}/llama.cpp-cache
+            mv .cache ${env:LOCALAPPDATA}/llama.cpp-cache/models
+          else # macos
             mkdir -p ~/Library/Caches
             mv .cache ~/Library/Caches/llama.cpp
           fi
       - name: Build ${{ matrix.build_type }}
+        if: matrix.os != 'windows-latest'
         run: |
             if [ "${{ matrix.build_type }}" = "cuda" ]; then
               ${{ env.EXEC }} sudo sh -ceux 'cd /usr/local/cuda/lib64/stubs/;rm -f libcuda.so.1;ln -s libcuda.so libcuda.so.1'
@@ -58,11 +91,21 @@ jobs:
             else
               ${{ env.EXEC }} make ${{ matrix.build_type }}
             fi
+      - name: Build ${{ matrix.build_type }} (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: cmd
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE_CMAKE }} -DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}
+          cmake --build . --config ${{ env.BUILD_TYPE_CMAKE }}
       - name: cache-save
         run: |
           rm -rf .cache
           if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             ${{ env.EXEC }} sh -ceux 'mv -v ~/.cache/llama.cpp .cache'
-          else
+          elif [ "${{ matrix.os }}" = "windows-latest" ]; then
+            mv ${env:LOCALAPPDATA}/llama.cpp-cache/models .cache
+          else # macos
             mv ~/Library/Caches/llama.cpp .cache
           fi
