@@ -17,7 +17,7 @@
             "cudaVersion": "12.5"
         },
         "./features/apt-packages": {
-            "packages": "ccache libcurl4-openssl-dev"
+            "packages": "ccache libcurl4-openssl-dev libssl-dev"
         },
     },
     "hostRequirements": {
