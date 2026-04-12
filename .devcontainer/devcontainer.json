@@ -13,7 +13,8 @@
             "upgradePackages": "false"
         },
         "ghcr.io/devcontainers/features/nvidia-cuda:1": {
-            "installToolkit": "true"
+            "installToolkit": "true",
+            "cudaVersion": "12.5"
         },
         "./features/apt-packages": {
             "packages": "ccache libcurl4-openssl-dev"
