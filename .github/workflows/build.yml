@@ -10,12 +10,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-14]
         build_type: [cpu, cuda, metal]
         exclude:
-          - os: macos-latest
+          - os: macos-14
             build_type: cpu
-          - os: macos-latest
+          - os: macos-14
             build_type: cuda
           - os: ubuntu-latest
             build_type: metal
