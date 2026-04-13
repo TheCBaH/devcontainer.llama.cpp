@@ -36,34 +36,28 @@ jobs:
           else
             echo 'EXEC=' >> $GITHUB_ENV
           fi
+      - name: Install ccache (macOS only)
+        if: matrix.os != 'ubuntu-latest'
+        run: brew install ccache
+      - name: Cache ccache
+        uses: actions/cache@v4
+        with:
+          path: .ccache
+          key: ccache-${{ matrix.os }}-${{ matrix.build_type }}-${{ hashFiles('.gitmodules') }}
+          restore-keys: |
+            ccache-${{ matrix.os }}-${{ matrix.build_type }}-
       - name: Cache Models
         uses: actions/cache@v4
         with:
           path: .cache
           key: models-${{ matrix.os }}-${{ hashFiles('Makefile') }}
-      - name: cache
-        run: |
-          mkdir -p .cache
-          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-            ${{ env.EXEC }} sh -ceux 'mkdir -p ~/.cache'
-            ${{ env.EXEC }} sh -ceux 'mv .cache ~/.cache/llama.cpp'
-          else
-            mkdir -p ~/Library/Caches
-            mv .cache ~/Library/Caches/llama.cpp
-          fi
       - name: Build ${{ matrix.build_type }}
+        env:
+          CCACHE_MAXSIZE: 512M
         run: |
             if [ "${{ matrix.build_type }}" = "cuda" ]; then
               ${{ env.EXEC }} sudo sh -ceux 'cd /usr/local/cuda/lib64/stubs/;rm -f libcuda.so.1;ln -s libcuda.so libcuda.so.1'
-              ${{ env.EXEC }} env LD_LIBRARY_PATH=/usr/local/cuda/lib64/stubs make ${{ matrix.build_type }}
+              ${{ env.EXEC }} sh -ceux "mkdir -p .ccache .cache && LD_LIBRARY_PATH=/usr/local/cuda/lib64/stubs CCACHE_DIR=\$(pwd)/.ccache CCACHE_MAXSIZE=$CCACHE_MAXSIZE LLAMA_CACHE=\$(pwd)/.cache make ${{ matrix.build_type }}"
             else
-              ${{ env.EXEC }} make ${{ matrix.build_type }}
+              ${{ env.EXEC }} sh -ceux "mkdir -p .ccache .cache && CCACHE_DIR=\$(pwd)/.ccache CCACHE_MAXSIZE=$CCACHE_MAXSIZE LLAMA_CACHE=\$(pwd)/.cache make ${{ matrix.build_type }}"
             fi
-      - name: cache-save
-        run: |
-          rm -rf .cache
-          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-            ${{ env.EXEC }} sh -ceux 'mv -v ~/.cache/llama.cpp .cache'
-          else
-            mv ~/Library/Caches/llama.cpp .cache
-          fi

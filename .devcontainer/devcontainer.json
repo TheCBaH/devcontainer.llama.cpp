@@ -16,7 +16,7 @@
             "installToolkit": "true"
         },
         "./features/apt-packages": {
-            "packages": "libcurl4-openssl-dev"
+            "packages": "ccache libcurl4-openssl-dev"
         },
     },
     "hostRequirements": {
