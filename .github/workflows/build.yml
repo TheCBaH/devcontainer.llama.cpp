@@ -40,14 +40,14 @@ jobs:
         if: matrix.os != 'ubuntu-latest'
         run: brew install ccache
       - name: Cache ccache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .ccache
           key: ccache-${{ matrix.os }}-${{ matrix.build_type }}-${{ hashFiles('.gitmodules') }}
           restore-keys: |
             ccache-${{ matrix.os }}-${{ matrix.build_type }}-
       - name: Cache Models
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .cache
           key: models-${{ matrix.os }}-${{ hashFiles('Makefile') }}
