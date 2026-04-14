@@ -12,14 +12,15 @@ CMAKE.metal=\
 
 %.build: llama.cpp/CMakeLists.txt
 	cd llama.cpp && $(ENV.$(basename $@)) cmake -B build.$(basename $@) -G Ninja -DCMAKE_BUILD_TYPE=Release $(CMAKE.$(basename $@))
-	cd llama.cpp && $(ENV.$(basename $@)) cmake --build build.$(basename $@) -j ${CPUS} --target llama-cli llama-server llama-bench
+	cd llama.cpp && $(ENV.$(basename $@)) cmake --build build.$(basename $@) -j ${CPUS} --target llama-cli llama-completion llama-server llama-bench
 
+LLAMA_COMPLETION=llama.cpp/build.$(basename $@)/bin/llama-completion
 LLAMA_CLI=llama.cpp/build.$(basename $@)/bin/llama-cli
 
 MODEL=-hf bartowski/SmolLM2-135M-Instruct-GGUF
 %.run:
 	${LLAMA_CLI} --list-devices
-	${LLAMA_CLI} ${MODEL} -p 'find x, when x = 1 + 2' -n 128 -no-cnv
+	${LLAMA_COMPLETION} ${MODEL} -p 'find x, when x = 1 + 2' -n 128
 
 %.clean:
 	rm -rf llama.cpp/build.$(basename $@)
