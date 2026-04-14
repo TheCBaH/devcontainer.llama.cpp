@@ -57,7 +57,9 @@ jobs:
         run: |
             if [ "${{ matrix.build_type }}" = "cuda" ]; then
               ${{ env.EXEC }} sudo sh -ceux 'cd /usr/local/cuda/lib64/stubs/;rm -f libcuda.so.1;ln -s libcuda.so libcuda.so.1'
-              ${{ env.EXEC }} sh -ceux "mkdir -p .ccache .cache && LD_LIBRARY_PATH=/usr/local/cuda/lib64/stubs CCACHE_DIR=\$(pwd)/.ccache CCACHE_MAXSIZE=$CCACHE_MAXSIZE LLAMA_CACHE=\$(pwd)/.cache make ${{ matrix.build_type }}"
-            else
-              ${{ env.EXEC }} sh -ceux "mkdir -p .ccache .cache && CCACHE_DIR=\$(pwd)/.ccache CCACHE_MAXSIZE=$CCACHE_MAXSIZE LLAMA_CACHE=\$(pwd)/.cache make ${{ matrix.build_type }}"
             fi
+            ${{ env.EXEC }} sh -ceux "mkdir -p .ccache .cache && LD_LIBRARY_PATH=/usr/local/cuda/lib64/stubs CCACHE_DIR=\$(pwd)/.ccache CCACHE_MAXSIZE=$CCACHE_MAXSIZE make ${{ matrix.build_type }}.build"
+      - name: Run ${{ matrix.build_type }}
+        if: matrix.build_type != 'cuda'
+        run: |
+            ${{ env.EXEC }} sh -ceux "LLAMA_CACHE=\$(pwd)/.cache make ${{ matrix.build_type }}.run"
