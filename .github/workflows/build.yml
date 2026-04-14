@@ -39,11 +39,14 @@ jobs:
       - name: Install ccache (macOS only)
         if: matrix.os != 'ubuntu-latest'
         run: brew install ccache
+      - name: Get submodule commit
+        id: submodule
+        run: echo "sha=$(git rev-parse HEAD:llama.cpp)" >> $GITHUB_OUTPUT
       - name: Cache ccache
         uses: actions/cache@v5
         with:
           path: .ccache
-          key: ccache-${{ matrix.os }}-${{ matrix.build_type }}-${{ hashFiles('.gitmodules') }}
+          key: ccache-${{ matrix.os }}-${{ matrix.build_type }}-${{ steps.submodule.outputs.sha }}
           restore-keys: |
             ccache-${{ matrix.os }}-${{ matrix.build_type }}-
       - name: Cache Models
@@ -59,6 +62,7 @@ jobs:
               ${{ env.EXEC }} sudo sh -ceux 'cd /usr/local/cuda/lib64/stubs/;rm -f libcuda.so.1;ln -s libcuda.so libcuda.so.1'
             fi
             ${{ env.EXEC }} sh -ceux "mkdir -p .ccache .cache && LD_LIBRARY_PATH=/usr/local/cuda/lib64/stubs CCACHE_DIR=\$(pwd)/.ccache CCACHE_MAXSIZE=$CCACHE_MAXSIZE make ${{ matrix.build_type }}.build"
+            ${{ env.EXEC }} sh -ceux "CCACHE_DIR=\$(pwd)/.ccache ccache -s"
       - name: Run ${{ matrix.build_type }}
         if: matrix.build_type != 'cuda'
         run: |
