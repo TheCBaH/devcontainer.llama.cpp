@@ -2,7 +2,8 @@ all: cpu
 
 CPUS=$$(getconf _NPROCESSORS_ONLN)
 
-CMAKE.cuda=-DGGML_NATIVE=OFF -DGGML_CUDA=ON
+NVIDIA_GPU = $(shell nvidia-smi -L 2>/dev/null | head -1)
+CMAKE.cuda = -DGGML_CUDA=ON -DGGML_NATIVE=OFF $(if $(NVIDIA_GPU),-DCMAKE_CUDA_ARCHITECTURES=native)
 ENV.cuda=env PATH=$$PATH:/usr/local/cuda/bin
 
 CMAKE.metal=\
