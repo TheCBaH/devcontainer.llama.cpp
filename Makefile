@@ -20,7 +20,7 @@ LLAMA_CLI=llama.cpp/build.$(basename $@)/bin/llama-cli
 MODEL=-hf bartowski/SmolLM2-135M-Instruct-GGUF
 %.run:
 	${LLAMA_CLI} --list-devices
-	${LLAMA_COMPLETION} ${MODEL} -p 'find x, when x = 1 + 2' -n 128
+	${LLAMA_COMPLETION} ${MODEL} -p 'find x, when x = 1 + 2' -n 128 --single-turn
 
 %.clean:
 	rm -rf llama.cpp/build.$(basename $@)
