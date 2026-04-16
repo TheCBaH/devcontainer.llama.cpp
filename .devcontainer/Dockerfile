@@ -29,13 +29,19 @@ RUN set -eux;\
         aarch64|arm64) NVIDIA_ARCH="sbsa" ;;\
         *) echo "Unsupported arch: $ARCH"; exit 1 ;;\
     esac;\
-    REPO_URL="https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/${NVIDIA_ARCH}";\
+    . /etc/os-release;\
+    case "$ID" in\
+        ubuntu) DISTRO_VERSION=$(echo "$VERSION_ID" | tr -d '.') ;;\
+        debian) DISTRO_VERSION="$VERSION_ID" ;;\
+        *) echo "Unsupported distro: $ID"; exit 1 ;;\
+    esac;\
+    REPO_URL="https://developer.download.nvidia.com/compute/cuda/repos/${ID}${DISTRO_VERSION}/${NVIDIA_ARCH}";\
     wget -q "${REPO_URL}/cuda-keyring_1.1-1_all.deb" -O /tmp/cuda-keyring.deb;\
     dpkg -i /tmp/cuda-keyring.deb;\
     rm /tmp/cuda-keyring.deb;\
     apt-get update;\
     export DEBIAN_FRONTEND=noninteractive; apt-get install -y --no-install-recommends\
-  cuda-toolkit-13-0\
+  cuda-toolkit-13-1\
 ;\
     apt-get autoremove -y; apt-get clean; rm -rf /var/lib/apt/lists/*;\
     echo DONE
