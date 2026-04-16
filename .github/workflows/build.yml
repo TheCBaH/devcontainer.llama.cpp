@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-26]
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-26]
         build_type: [cpu, cuda, metal]
         exclude:
           - os: macos-26
@@ -20,24 +20,26 @@ jobs:
             build_type: cuda
           - os: ubuntu-latest
             build_type: metal
+          - os: ubuntu-24.04-arm
+            build_type: metal
     steps:
       - name: checkout
         uses: actions/checkout@v6
         with:
           submodules: true
       - name: Set up devcontainer (Linux only)
-        if: matrix.os == 'ubuntu-latest'
+        if: runner.os == 'Linux'
         uses: ./.github/workflows/actions/devcontainer
         id: devcontainer
       - name: setup exec
         run: |
-          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+          if [ "${{ runner.os }}" = "Linux" ]; then
             echo 'EXEC=${{ steps.devcontainer.outputs.exec }}' >> $GITHUB_ENV
           else
             echo 'EXEC=' >> $GITHUB_ENV
           fi
       - name: Install ccache (macOS only)
-        if: matrix.os != 'ubuntu-latest'
+        if: runner.os != 'Linux'
         run: brew install ccache
       - name: Get submodule commit
         id: submodule
