@@ -1,5 +1,5 @@
-ARG VARIANT=22
-FROM ubuntu:${VARIANT}.04
+ARG VARIANT=12
+FROM debian:${VARIANT}
 RUN set -eux;\
     apt-get update;\
     export DEBIAN_FRONTEND=noninteractive; apt-get install -y --no-install-recommends\
