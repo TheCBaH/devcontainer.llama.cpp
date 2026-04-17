@@ -38,8 +38,14 @@ jobs:
           else
             echo 'EXEC=' >> $GITHUB_ENV
           fi
+      - name: Cache Homebrew downloads
+        if: runner.os == 'macOS'
+        uses: actions/cache@v5
+        with:
+          path: ~/Library/Caches/Homebrew/downloads
+          key: brew-ccache-${{ runner.os }}
       - name: Install ccache (macOS only)
-        if: runner.os != 'Linux'
+        if: runner.os == 'macOS'
         run: brew install ccache
       - name: Get submodule commit
         id: submodule
