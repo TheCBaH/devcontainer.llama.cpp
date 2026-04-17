@@ -23,6 +23,10 @@ MODEL=-hf bartowski/SmolLM2-135M-Instruct-GGUF
 	${LLAMA_CLI} --list-devices
 	${LLAMA_COMPLETION} ${MODEL} -p 'find x, when x = 1 + 2' -n 128 --single-turn
 
+BENCH_TYPE ?=
+%.bench:
+	sh bench.sh $(basename $@) $(BENCH_TYPE)
+
 %.clean:
 	rm -rf llama.cpp/build.$(basename $@)
 

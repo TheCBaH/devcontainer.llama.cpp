@@ -69,3 +69,7 @@ jobs:
         if: matrix.build_type != 'cuda'
         run: |
             ${{ env.EXEC }} sh -ceux "LLAMA_CACHE=\$(pwd)/.cache make ${{ matrix.build_type }}.run"
+      - name: Bench ${{ matrix.build_type }}
+        if: matrix.build_type != 'cuda'
+        run: |
+            ${{ env.EXEC }} sh -ceux "LLAMA_CACHE=\$(pwd)/.cache make ${{ matrix.build_type }}.bench BENCH_TYPE=--fast"
