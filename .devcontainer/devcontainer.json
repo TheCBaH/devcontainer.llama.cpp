@@ -2,7 +2,7 @@
 {
     "name": "LLAMA.CPP devcontainer",
     "build":  {
-        "dockerfile": "Dockerfile",
+        "dockerfile": "Dockerfile"
     },
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": {
@@ -14,7 +14,7 @@
         },
         "./features/apt-packages": {
             "packages": "ccache libcurl4-openssl-dev libssl-dev"
-        },
+        }
     },
     "hostRequirements": {
         "gpu": "optional"
