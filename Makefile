@@ -10,6 +10,7 @@ CMAKE.metal=\
  -DGGML_METAL_EMBED_LIBRARY=ON\
  -DGGML_METAL_USE_BF16=ON\
  -DGGML_OPENMP=OFF\
+ -DLLAMA_BUILD_LIBRESSL=ON\
 
 %.build: llama.cpp/CMakeLists.txt
 	cd llama.cpp && $(ENV.$(basename $@)) cmake -B build.$(basename $@) -G Ninja -DCMAKE_BUILD_TYPE=Release $(CMAKE.$(basename $@))
