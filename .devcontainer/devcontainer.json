@@ -16,9 +16,13 @@
             "packages": "ccache libcurl4-openssl-dev libssl-dev"
         }
     },
+    /*
     "hostRequirements": {
-        "gpu": "optional"
+        "gpu": true
     },
+    */
+    /* "runArgs": ["--runtime=nvidia", "--gpus", "all"], */
+    "runArgs": ["--gpus", "all"],
     "remoteUser": "vscode",
     "postCreateCommand": {
         "submodules": "git submodule update --recursive --init --depth=1"
