@@ -24,7 +24,7 @@ jobs:
             build_type: metal
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: true
       - name: Set up devcontainer (Linux only)
