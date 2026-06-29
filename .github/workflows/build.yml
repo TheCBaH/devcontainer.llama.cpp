@@ -40,7 +40,7 @@ jobs:
           fi
       - name: Cache Homebrew downloads
         if: runner.os == 'macOS'
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/Library/Caches/Homebrew/downloads
           key: brew-ccache-${{ runner.os }}
@@ -51,14 +51,14 @@ jobs:
         id: submodule
         run: echo "sha=$(git rev-parse HEAD:llama.cpp)" >> $GITHUB_OUTPUT
       - name: Cache ccache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: .ccache
           key: ccache-${{ matrix.os }}-${{ matrix.build_type }}-${{ steps.submodule.outputs.sha }}
           restore-keys: |
             ccache-${{ matrix.os }}-${{ matrix.build_type }}-
       - name: Cache Models
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: .cache
           key: models-${{ matrix.os }}-${{ hashFiles('Makefile') }}
