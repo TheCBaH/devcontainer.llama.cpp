@@ -29,7 +29,7 @@ jobs:
           submodules: true
       - name: Set up devcontainer (Linux only)
         if: runner.os == 'Linux'
-        uses: ./.github/workflows/actions/devcontainer
+        uses: TheCBaH/devcontainer-action/devcontainer@v1
         id: devcontainer
       - name: setup exec
         run: |
