@@ -1,4 +1,4 @@
-ARG VARIANT=12
+ARG VARIANT=13
 FROM debian:${VARIANT}
 RUN set -eux;\
     apt-get update;\
@@ -41,7 +41,7 @@ RUN set -eux;\
     rm /tmp/cuda-keyring.deb;\
     apt-get update;\
     export DEBIAN_FRONTEND=noninteractive; apt-get install -y --no-install-recommends\
-  cuda-toolkit-13-1\
+  cuda-toolkit-13-5\
 ;\
     apt-get autoremove -y; apt-get clean; rm -rf /var/lib/apt/lists/*;\
     echo DONE
