@@ -12,6 +12,7 @@
             "userGid": "1000",
             "upgradePackages": "false"
         },
+        "ghcr.io/devcontainers/features/node:2": {},
         "./features/apt-packages": {
             "packages": "ccache libcurl4-openssl-dev libssl-dev"
         }
