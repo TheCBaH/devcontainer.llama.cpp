@@ -2,6 +2,8 @@ all: cpu
 
 CPUS=$$(getconf _NPROCESSORS_ONLN)
 
+CMAKE.ui = -DLLAMA_USE_PREBUILT_UI=OFF
+
 NVIDIA_GPU = $(shell nvidia-smi -L 2>/dev/null | head -1)
 CMAKE.cuda = -DGGML_CUDA=ON -DGGML_NATIVE=OFF $(if $(NVIDIA_GPU),-DCMAKE_CUDA_ARCHITECTURES=native)
 ENV.cuda=env PATH=$$PATH:/usr/local/cuda/bin
@@ -13,7 +15,7 @@ CMAKE.metal=\
  -DLLAMA_BUILD_LIBRESSL=ON\
 
 %.build: llama.cpp/CMakeLists.txt
-	cd llama.cpp && $(ENV.$(basename $@)) cmake -B build.$(basename $@) -G Ninja -DCMAKE_BUILD_TYPE=Release $(CMAKE.$(basename $@))
+	cd llama.cpp && $(ENV.$(basename $@)) cmake -B build.$(basename $@) -G Ninja -DCMAKE_BUILD_TYPE=Release $(CMAKE.ui) $(CMAKE.$(basename $@))
 	cd llama.cpp && $(ENV.$(basename $@)) cmake --build build.$(basename $@) -j ${CPUS} --target llama-cli llama-completion llama-server llama-bench llama-batched-bench
 
 LLAMA_COMPLETION=llama.cpp/build.$(basename $@)/bin/llama-completion
